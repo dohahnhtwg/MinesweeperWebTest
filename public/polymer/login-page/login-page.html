@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="login-page">
+    <template>
+        <style is="custom-style">
+
+        </style>
+        <div class="container">
+            <div>
+                <paper-input label="Username" value="{{username}}"></paper-input>
+                <paper-input label="Password" type="password" value="{{pass}}"></paper-input>
+            </div>
+        </div>
+        <div class="container">
+            <div>
+                <paper-button id="loginButton" raised>Login</paper-button>
+                <paper-button id="registerButton" raised>Register</paper-button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'login-page',
+            listeners: {
+                'loginButton.tap': 'login',
+                'registerButton.tap' : 'register'
+            },
+            properties: {
+
+            },
+            login: function () {
+                var ws = document.querySelector("web-socket");
+                var loginMsg = {type:"login", username: this.username, pass: this.pass};
+                ws.send(JSON.stringify(loginMsg));
+            },
+            register: function () {
+                var ws = document.querySelector("web-socket");
+                var registerMsg = {type:"register", username: this.username, pass: this.pass};
+                ws.send(JSON.stringify(registerMsg));
+            }
+        });
+    </script>
+</dom-module>

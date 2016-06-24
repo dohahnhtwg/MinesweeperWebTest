@@ -19,6 +19,7 @@ package minesweeper.controller.impl;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import akka.pattern.Patterns;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import minesweeper.aview.messages.*;
@@ -33,6 +34,10 @@ import minesweeper.database.DataAccessObject;
 import minesweeper.model.IStatistic;
 import minesweeper.model.IUser;
 import minesweeper.model.impl.User;
+import scala.concurrent.Future;
+import scala.concurrent.Await;
+import akka.util.Timeout;
+import scala.concurrent.duration.Duration;
 
 
 @Singleton
@@ -140,7 +145,15 @@ public class MainController extends UntypedActor implements IMainController {
         if (msg.getUsername().isEmpty() || msg.getPassword().isEmpty()) {
             getContext().parent().tell(new NewAccountResponse(false), self());
         } else {
-            IUser userForDb = new User(msg.getUsername(), msg.getPassword());
+            Timeout timeout = new Timeout(Duration.create(5, "seconds"));
+            Future<Object> future = Patterns.ask(fieldController, new CreateRequest(9, 9, 10), timeout);
+            FieldResponse result = null;
+            try {
+                result = (FieldResponse) Await.result(future, timeout.duration());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            IUser userForDb = new User(msg.getUsername(), msg.getPassword(), result.getField());
             if(database.contains(userForDb)) {
                 getContext().parent().tell(new NewAccountResponse(false), self());
             } else {

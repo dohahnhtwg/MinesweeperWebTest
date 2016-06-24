@@ -18,12 +18,8 @@ import org.ektorp.impl.StdCouchDbInstance;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Created by dohahn on 11.04.2016.
- *
- */
+
 public class CouchDatabase implements DataAccessObject {
 
     private CouchDbConnector db = null;
@@ -31,14 +27,14 @@ public class CouchDatabase implements DataAccessObject {
 
     @Inject
     public CouchDatabase()  {
-        HttpClient client;
+        HttpClient client = null;
         try {
             client = new StdHttpClient.Builder().url("http://lenny2.in.htwg-konstanz.de:5984").build();
-            CouchDbInstance dbInstance = new StdCouchDbInstance(client);
-            db = dbInstance.createConnector("minesweeper_db_SS2016", true);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+        CouchDbInstance dbInstance = new StdCouchDbInstance(client);
+        db = dbInstance.createConnector("minesweeper_db_SS2016", true);
     }
 
     @Override
@@ -174,11 +170,13 @@ public class CouchDatabase implements DataAccessObject {
         ViewQuery query = new ViewQuery().allDocs();
         ViewResult vr = db.queryView(query);
 
-        users.addAll(vr.getRows().stream().map(r -> getUserById(r.getId())).collect(Collectors.toList()));
+        for (ViewResult.Row r : vr.getRows()) {
+            users.add(getUserById(r.getId()));
+        }
         return users;
     }
 
-    private CouchUser getUserById(String id) {
+    public CouchUser getUserById(String id) {
         CouchUser user = db.find(CouchUser.class, id);
         if (user == null) {
             return null;

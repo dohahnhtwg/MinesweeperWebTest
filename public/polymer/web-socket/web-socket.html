@@ -36,12 +36,11 @@
             },
 
             onMessage: function(event) {
-                var msg = event.data;
+                var msg = JSON.parse(event.data);
                 console.log(msg);
             },
 
             onOpen: function (event) {
-                this.send('Hi');
                 for(var i = 0; this.msgToSend.length; i++)  {
                     this.webSocket.send(this.msgToSend.pop());
                 }

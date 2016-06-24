@@ -25,7 +25,7 @@ public class User implements IUser {
         this.id = UUID.randomUUID().toString();
     }
 
-    public User(String name, String password) {
+    public User(String name, String password)   {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         try {
@@ -34,7 +34,20 @@ public class User implements IUser {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException exc) {
             exc.printStackTrace();
         }
-        playingField = new Field();
+        playingField = new Field(9, 9, 10);
+        statistic = new Statistic();
+    }
+
+    public User(String name, String password, IField field) {
+        this.id = UUID.randomUUID().toString();
+        this.name = name;
+        try {
+            this.salt = this.generateSalt();
+            this.encryptedPassword = generateEncryptedPassword(password);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException exc) {
+            exc.printStackTrace();
+        }
+        playingField = field;
         statistic = new Statistic();
     }
 

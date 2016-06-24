@@ -13,7 +13,7 @@
     </head>
     <body class="fullbleed layout vertical" unresolved>
         <template is="dom-bind" id="app">
-            <web-socket url="ws://localhost:9000/socket"></web-socket>
+            <web-socket id="ws" url="ws://localhost:9000/socket"></web-socket>
             <paper-scroll-header-panel class="flex">
                 <paper-toolbar class="medium-tall">
                     <paper-tabs class="bottom self-end" selected="{{selected}}">
@@ -26,17 +26,7 @@
                 <iron-pages selected="{{selected}}">
                     @*Page 1*@
                     <div>
-                        <div class="container">
-                            <div>
-                                <paper-input label="Username"></paper-input>
-                                <paper-input label="Password" type="password"></paper-input>
-                            </div>
-                        </div>
-                        <div class="container">
-                            <div>
-                                <paper-button raised on-tap="login">Enter</paper-button>
-                            </div>
-                        </div>
+                        <login-page></login-page>
                     </div>
                     @*Page 2*@
                     <div>
@@ -46,10 +36,8 @@
             </paper-scroll-header-panel>
         </template>
         <script>
+            window.addEventListener('WebComponentsReady', function() {
                 var bind = document.querySelector('#app');
-                bind.login = function() {
-                    console.log("Login clicked!!!");
-                };
                 bind.selected = 0;
                 bind.tab1 = function() {
                     bind.selected = 0;
@@ -57,6 +45,7 @@
                 bind.tab2 = function() {
                     bind.selected = 1;
                 };
+            });
         </script>
     </body>
 </html>
