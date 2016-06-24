@@ -10,7 +10,8 @@ libraryDependencies ++= Seq(
     jdbc ,
     cache ,
     ws   ,
-    specs2 % Test
+    specs2 % Test ,
+    "org.ektorp" % "org.ektorp" % "1.4.2"
 )
 
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
