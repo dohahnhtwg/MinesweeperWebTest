@@ -1,0 +1,62 @@
+@(title: String)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="import" href="@routes.Assets.at("polymer/elements.html")">
+        <script src="@routes.Assets.at("bower_components/webcomponentsjs/webcomponents-lite.js")"></script>
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+    </head>
+    <body class="fullbleed layout vertical" unresolved>
+        <template is="dom-bind" id="app">
+            <web-socket url="ws://localhost:9000/socket"></web-socket>
+            <paper-scroll-header-panel class="flex">
+                <paper-toolbar class="medium-tall">
+                    <paper-tabs class="bottom self-end" selected="{{selected}}">
+                        <paper-tab on-tap="tab1">Login</paper-tab>
+                        <paper-tab on-tap="tab2">Game</paper-tab>
+                    </paper-tabs>
+                    <div class="title">Minesweeper</div>
+                </paper-toolbar>
+
+                <iron-pages selected="{{selected}}">
+                    @*Page 1*@
+                    <div>
+                        <div class="container">
+                            <div>
+                                <paper-input label="Username"></paper-input>
+                                <paper-input label="Password" type="password"></paper-input>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div>
+                                <paper-button raised on-tap="login">Enter</paper-button>
+                            </div>
+                        </div>
+                    </div>
+                    @*Page 2*@
+                    <div>
+                        <div>Minesweeper</div>
+                    </div>
+                </iron-pages>
+            </paper-scroll-header-panel>
+        </template>
+        <script>
+                var bind = document.querySelector('#app');
+                bind.login = function() {
+                    console.log("Login clicked!!!");
+                };
+                bind.selected = 0;
+                bind.tab1 = function() {
+                    bind.selected = 0;
+                };
+                bind.tab2 = function() {
+                    bind.selected = 1;
+                };
+        </script>
+    </body>
+</html>

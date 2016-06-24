@@ -1,0 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="web-socket">
+    <template>
+        <style is="custom-style">
+
+        </style>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'web-socket',
+            properties: {
+                url: String,
+                webSocket: {
+                    type: Object,
+                    computed: 'createWebSocket(url)',
+                    observer: 'webSocketChanged'
+                },
+                msgToSend: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            createWebSocket(url)    {
+                var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+                return new WS(url);
+            },
+
+            webSocketChanged()  {
+                this.webSocket.onmessage = this.onMessage.bind(this);
+                this.webSocket.onopen = this.onOpen.bind(this);
+                this.webSocket.onerror = this.onError.bind(this);
+                this.webSocket.onclose = this.onClose.bind(this);
+            },
+
+            onMessage: function(event) {
+                var msg = event.data;
+                console.log(msg);
+            },
+
+            onOpen: function (event) {
+                this.send('Hi');
+                for(var i = 0; this.msgToSend.length; i++)  {
+                    this.webSocket.send(this.msgToSend.pop());
+                }
+            },
+
+            onError: function (event) {
+                console.error("Error: " + event.reason);
+            },
+
+            onClose: function (event) {
+                console.log("Web socket closed");
+            },
+
+            send: function (msg) {
+                if(this.webSocket.readyState != 1)  {
+                    this.msgToSend.push(msg);
+                } else {
+                    this.webSocket.send(msg);
+                }
+            }
+        });
+    </script>
+</dom-module>
