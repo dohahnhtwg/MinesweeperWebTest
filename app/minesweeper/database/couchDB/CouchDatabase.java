@@ -14,6 +14,7 @@ import org.ektorp.*;
 import org.ektorp.http.HttpClient;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
+import play.Logger;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;

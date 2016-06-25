@@ -14,11 +14,18 @@ public class LoginResponse implements Serializable {
      */
     private boolean success;
 
-    public LoginResponse(boolean success)  {
+    private String user;
+
+    public LoginResponse(boolean success, String user)  {
         this.success = success;
+        this.user = user;
     }
 
     public boolean isSuccess()  {
         return success;
+    }
+
+    public String getUser() {
+        return user;
     }
 }

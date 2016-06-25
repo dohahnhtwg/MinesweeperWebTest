@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="minesweeper-highscore">
+    <style>
+
+    </style>
+    <template>
+        <div class="container">
+            <div>
+                <iron-ajax
+                        id="ajax"
+                        url="http://de-htwg-sa-highscores.herokuapp.com/"
+                        method="POST"
+                        on-response="handleResponse"
+                        debounce-duration="300"></iron-ajax>
+                <a href="http://de-htwg-sa-highscores.herokuapp.com/">
+                    <paper-button raised>HighScore</paper-button>
+                </a>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'minesweeper-highscore',
+            properties: {
+                gameStart: {
+                    type: Number,
+                    value: function () {
+                        return new Date().getSeconds();
+                    }
+                }
+            },
+
+            newGame: function () {
+                this.gameStart = new Date().getSeconds();
+            },
+            saveScore: function () {
+                var bind = document.querySelector('#app');
+                var score = new Date().getSeconds() - this.gameStart;
+                var msg = {"game": "Minesweeper2016", "player": bind.user, "score": score};
+                console.log(msg);
+                console.log(JSON.stringify(msg));
+                this.$.ajax.body = JSON.stringify(msg);
+                jQuery.support.cors = true;
+                this.$.ajax.generateRequest();
+            },
+            handleResponse: function (e) {
+                console.log("Got");
+                console.log(e);
+            }
+        });
+    </script>
+</dom-module>

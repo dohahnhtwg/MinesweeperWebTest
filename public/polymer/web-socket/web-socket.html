@@ -37,7 +37,19 @@
 
             onMessage: function(event) {
                 var msg = JSON.parse(event.data);
-                console.log(msg);
+                switch (msg.type)   {
+                    case "LoginResponse":
+                        this.handleLoginResponse(msg);
+                        break;
+                    case "RegisterResponse":
+                        this.handleRegisterResponse(msg);
+                        break;
+                    case "UpdateMessage":
+                        this.handleUpdateMessage(msg);
+                        break;
+                    default:
+                        console.warn("Don't know message type " + msg.type);
+                }
             },
 
             onOpen: function (event) {
@@ -60,7 +72,35 @@
                 } else {
                     this.webSocket.send(msg);
                 }
+            },
+            handleLoginResponse: function (msg) {
+                var toast = document.querySelector("paper-toast");
+                var bind = document.querySelector('#app');
+                if(msg.success) {
+                    toast.text = "Login was successful"
+                    bind.user = msg.user;
+                } else {
+                    toast.text = "Login was not successful"
+                }
+                toast.open()
+            },
+            handleRegisterResponse: function (msg) {
+                var toast = document.querySelector("paper-toast");
+                if(msg.success) {
+                    toast.text = "Registration was successful"
+                } else {
+                    toast.text = "Registration was not successful"
+                }
+                toast.open()
+            },
+            handleUpdateMessage: function (msg) {
+                var minesweeperField = document.querySelector("minesweeper-field");
+                console.log(msg.field);
+                minesweeperField.grid = msg.field;
+                minesweeperField.isVictory = msg.victory;
+                minesweeperField.loose = msg.loose;
             }
+
         });
     </script>
 </dom-module>

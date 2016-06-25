@@ -34,6 +34,7 @@ import minesweeper.database.DataAccessObject;
 import minesweeper.model.IStatistic;
 import minesweeper.model.IUser;
 import minesweeper.model.impl.User;
+import play.Logger;
 import scala.concurrent.Future;
 import scala.concurrent.Await;
 import akka.util.Timeout;
@@ -130,13 +131,13 @@ public class MainController extends UntypedActor implements IMainController {
     private void logIn(LoginRequest msg) {
         IUser userFromDb = database.read(msg.getUsername());
         if(userFromDb == null)    {
-            getContext().parent().tell(new LoginResponse(false), self());
+            getContext().parent().tell(new LoginResponse(false, msg.getUsername()), self());
         } else {
             user = userFromDb;
             user.authenticate(msg.getUsername(), msg.getPassword());
             fieldController.tell(new NewFieldMessage(userFromDb.getPlayingField()), self());
             statistic = userFromDb.getStatistic();
-            getContext().parent().tell(new LoginResponse(true), self());
+            getContext().parent().tell(new LoginResponse(true, msg.getUsername()), self());
             fieldController.tell(new FieldRequest(), self());
         }
     }

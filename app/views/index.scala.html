@@ -19,8 +19,10 @@
                     <paper-tabs class="bottom self-end" selected="{{selected}}">
                         <paper-tab on-tap="tab1">Login</paper-tab>
                         <paper-tab on-tap="tab2">Game</paper-tab>
+                        <paper-tab on-tap="tab3">HighScore</paper-tab>
                     </paper-tabs>
                     <div class="title">Minesweeper</div>
+                    <div id="user">User: {{user}}</div>
                 </paper-toolbar>
 
                 <iron-pages selected="{{selected}}">
@@ -30,10 +32,15 @@
                     </div>
                     @*Page 2*@
                     <div>
-                        <div>Minesweeper</div>
+                        <minesweeper-field></minesweeper-field>
+                    </div>
+                    @*Page 3*@
+                    <div>
+                        <minesweeper-highscore></minesweeper-highscore>
                     </div>
                 </iron-pages>
             </paper-scroll-header-panel>
+            <paper-toast id="statusToast"></paper-toast>
         </template>
         <script>
             window.addEventListener('WebComponentsReady', function() {
@@ -45,6 +52,10 @@
                 bind.tab2 = function() {
                     bind.selected = 1;
                 };
+                bind.tab3 = function() {
+                    bind.selected = 2;
+                };
+                bind.user = "Default";
             });
         </script>
     </body>

@@ -1,0 +1,148 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="minesweeper-field">
+    <style>
+        #row {
+            display: block
+        }
+        #column {
+            display: inline-block
+        }
+        #minesweeperField {
+            text-align: center;
+            margin-top: 5%;
+            margin-bottom: 5%;
+            margin-right: 5%;
+            margin-left: 5%;
+        }
+        #minesweeperHeader {
+            text-shadow: 0 0 5px #ddd, 0 0 10px #ddd,
+            0 0 20px #ddd, 0 0 30px #ddd,
+            0 0 40px #ddd;
+            font-family: "Raleway", monospace;
+            font-weight: 100;
+            font-size: 80px;
+            text-align: center;
+            color: #ad2b2b;
+        }
+    </style>
+    <template>
+        <div id="minesweeperField">
+            <h1 id="minesweeperHeader">&nbsp;&nbsp;Minesweeper</h1>
+            <div id="commanPanel" style="margin-bottom: 20px;">
+                <paper-button id="restart" raised>Restart</paper-button>
+                <paper-button id="undo" raised>Undo</paper-button>
+                <paper-button id="redo" raised>Redo</paper-button>
+                <paper-dropdown-menu label="Size">
+                    <paper-listbox class="dropdown-content">
+                        <paper-item id="small">Small</paper-item>
+                        <paper-item id="medium">Medium</paper-item>
+                        <paper-item id="large">Large</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+            </div>
+            <template id="gridF" is="dom-repeat" items="{{grid}}">
+                <div id="row">
+                    <template is="dom-repeat" items="{{item}}">
+                        <div id="column">
+                            <minesweeper-cell isrevealed="{{item.isRevealed}}" column="{{item.column}}" row="{{item.row}}" cellvalue="{{item.value}}"></minesweeper-cell>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <paper-dialog id="dialog">
+            <h2>Game Over!!!</h2>
+            <p>{{winLose}}</p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Close</paper-button>
+                <paper-button id="restartDialog" dialog-confirm autofocus>Restart</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'minesweeper-field',
+            listeners: {
+                'restartDialog.tap': 'restart',
+                'restart.tap': 'restart',
+                'undo.tap' : 'undo',
+                'redo.tap' : 'redo',
+                'small.tap' : 'small',
+                'medium.tap' : 'medium',
+                'large.tap' : 'large'
+            },
+            properties: {
+                loose: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_looseChanged'
+                },
+                victory: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_victoryChanged'
+                },
+                grid: {
+                    type: Array
+                }
+            },
+            ready: function() {
+                this.grid = null;
+                this.victory = false;
+                this.loose = false;
+                this.winLose = "";
+            },
+            _looseChanged: function(newValue, oldValue) {
+                if(newValue != oldValue)  {
+                    if(newValue == true) {
+                        if(this.victory == true)  {
+                            this.winLose = 'You win!';
+                        } else {
+                            this.winLose = 'You loose!';
+                        }
+                        document.querySelector('minesweeper-highscore').saveScore();
+                        this.$.dialog.toggle();
+                    }
+                }
+            },
+            _victoryChanged: function(newValue, oldValue) {
+                if(newValue != oldValue)  {
+                    if(newValue == true) {
+                        document.querySelector('minesweeper-highscore').saveScore();
+                        this.winLose = 'You win!';
+                        this.$.dialog.toggle();
+                    }
+                }
+            },
+            restart: function () {
+                this.sendCommand("n");
+                document.querySelector('minesweeper-highscore').newGame();
+            },
+            undo: function () {
+                this.sendCommand("u");
+            },
+            redo: function () {
+                this.sendCommand("r");
+            },
+            small: function () {
+                this.sendCommand("sS");
+                document.querySelector('minesweeper-highscore').newGame();
+            },
+            medium: function () {
+                this.sendCommand("sM");
+                document.querySelector('minesweeper-highscore').newGame();
+            },
+            large: function () {
+                this.sendCommand("sL");
+                document.querySelector('minesweeper-highscore').newGame();
+            },
+            sendCommand: function (command) {
+                var ws = document.querySelector("web-socket");
+                var registerMsg = {type:"command", command: command};
+                ws.send(JSON.stringify(registerMsg))
+            }
+        });
+    </script>
+</dom-module>
